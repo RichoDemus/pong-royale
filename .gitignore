@@ -1,0 +1,4 @@
+/target
+.idea
+wasm.js
+wasm_bg.wasm

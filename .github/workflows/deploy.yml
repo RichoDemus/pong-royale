@@ -1,0 +1,81 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-deploy-web:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: install libudev
+        run: sudo apt-get update && sudo apt-get install libudev-dev
+      - name: Cargo Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('Cargo.toml') }}
+            ${{ runner.os }}-cargo
+
+      - name: Cargo Target Cache
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-target-${{ hashFiles('Cargo.toml') }}
+            ${{ runner.os }}-cargo-target
+      - name: add wasm target
+        run: rustup target add wasm32-unknown-unknown
+      - name: install wasm-bindgen
+        run: cargo install wasm-bindgen-cli --version 0.2.69
+      - name: build wasm
+        run: cargo build --release --target wasm32-unknown-unknown --no-default-features --features web
+      - name: wasm bindgen
+        run: wasm-bindgen --no-typescript --target web --out-name wasm --out-dir target/distribution target/wasm32-unknown-unknown/release/pong-royale.wasm
+      - name: copy static files
+        run: cp index.html target/distribution
+      - name: List files to deploy
+        run: tree target/distribution
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: target/distribution
+          single-commit: true
+
+  build-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: docker build
+        run: docker build -t ${{ secrets.DOCKER_IMAGE }} .
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ secrets.DOCKER_IMAGE }}
+          tag_with_ref: true
+
+  deploy-docker:
+    runs-on: ubuntu-latest
+    needs: build-docker
+
+    steps:
+      - name: ssh
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+#          command: docker-compose -f richo-google-cloud/webpong/docker-compose.yaml pull && docker-compose -f richo-google-cloud/webpong/docker-compose.yaml down && docker-compose -f richo-google-cloud/webpong/docker-compose.yaml up -d
+          command: pwd
+          host: ${{ secrets.SSH_DEPLOY_HOST }}
+          username: ${{ secrets.SSH_DEPLOY_USERNAME }}
+          privateKey: ${{ secrets.SSH_DEPLOY_KEY }}
