@@ -44,4 +44,4 @@ COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/pong-royale ./
 # Use an unprivileged user.
 USER appuser:appuser
 
-CMD ["/app/pong-royale"]
+CMD ["/app/pong-royale","--server"]

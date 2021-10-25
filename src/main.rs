@@ -1,5 +1,6 @@
 use std::{net::SocketAddr, time::Duration};
 use std::env;
+use std::net::{IpAddr, Ipv4Addr};
 use std::str::FromStr;
 
 use bevy::{
@@ -55,6 +56,9 @@ fn main() {
          }
      }
 
+    #[cfg(target_arch = "wasm32")]
+    app.add_plugin(bevy_webgl2::WebGL2Plugin);
+
     app
         // The NetworkingPlugin
         .add_plugin(NetworkingPlugin {
@@ -88,7 +92,7 @@ fn startup(
         if #[cfg(target_arch = "wasm32")] {
             // set the following address to your server address (i.e. local machine)
             // and remove compile_error! line
-            let mut server_address: SocketAddr = "192.168.1.1:0".parse().unwrap(); // todo update this line
+            let mut server_address: SocketAddr = "192.168.50.61:0".parse().unwrap(); // todo update this line
             // compile_error!("You need to set server_address.");
             server_address.set_port(SERVER_PORT);
         } else {
@@ -98,10 +102,16 @@ fn startup(
         }
     }
 
+    #[cfg(target_arch = "wasm32")]
+    net.connect(server_address);
+
     #[cfg(not(target_arch = "wasm32"))]
     if is_server() {
+        // let server_address = SocketAddr::new(IpAddr::V4(Ipv4Addr::from_str("0.0.0.0").unwrap()), SERVER_PORT);
+        // let server_address2 = SocketAddr::new(IpAddr::V4(Ipv4Addr::from_str("0.0.0.0").unwrap()), SERVER_PORT+1);
+        // let server_address3 = SocketAddr::new(IpAddr::V4(Ipv4Addr::from_str("0.0.0.0").unwrap()), SERVER_PORT+2);
         info!("Starting server on {:?}", server_address);
-        net.listen(server_address, None, None);
+        net.listen(server_address, Some(server_address), Some(server_address));
     } else {
         info!("Starting client, connecting to: {:?}", server_address);
         net.connect(server_address);
@@ -190,6 +200,8 @@ fn is_server() -> bool {
 }
 
 fn get_player_number() -> u32 {
+    #[cfg(target_arch = "wasm32")]
+    return 1;
     let args: Vec<String> = env::args().collect();
 
     if let Some(arg) = args.get(2) {

@@ -18,6 +18,7 @@ web = [
     "bevy/render",
     "bevy/png",
     "bevy_webgl2",
+    "bevy_networking_turbulence/use-webrtc"
 ]
 
 headless = []
