@@ -1,0 +1,10 @@
+FROM rust
+mkdir /app/
+copy Cargo.toml /app/
+copy Cargo.lock /app/
+copy src /app/
+
+WORKDIR /app/
+RUN cargo build --no-default-features --features headless
+CMD cargo run --no-default-features --features headless -- --server
+

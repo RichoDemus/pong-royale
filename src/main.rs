@@ -92,12 +92,16 @@ fn startup(
         if #[cfg(target_arch = "wasm32")] {
             // set the following address to your server address (i.e. local machine)
             // and remove compile_error! line
-            let mut server_address: SocketAddr = "192.168.50.45:0".parse().unwrap();
+            // let mut server_address: SocketAddr = "192.168.50.45:0".parse().unwrap();
+            let mut server_address: SocketAddr = "192.168.50.61:0".parse().unwrap();
             // compile_error!("You need to set server_address.");
             server_address.set_port(SERVER_PORT);
         } else {
             let ip_address =
                 bevy_networking_turbulence::find_my_ip_address().expect("can't find ip address");
+            // let ip = std::env::var("IP").unwrap();
+            // let ip_address = Ipv4Addr::from_str(ip.as_str()).unwrap();
+            // let ip_address = IpAddr::V4(ip_address);
             let server_address = SocketAddr::new(ip_address, SERVER_PORT);
         }
     }
