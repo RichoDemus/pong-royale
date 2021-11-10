@@ -1,0 +1,72 @@
+[package]
+name = "bevy_ws"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = [
+    "bevy/bevy_gltf",
+    "bevy/bevy_winit",
+    "bevy/render",
+    "bevy/png",
+    "bevy/bevy_wgpu",
+    #    "bevy_networking_turbulence/use-udp",
+]
+
+web = [
+    "bevy/bevy_gltf",
+    "bevy/bevy_winit",
+    "bevy/render",
+    "bevy/png",
+    #    "bevy_networking_turbulence/use-webrtc",
+]
+
+[dependencies]
+bevy = { version = "0.5", default-features = false }
+#once_cell = "*"
+log = "*"
+
+url = "*"
+#uuid = "*"
+serde = "*"
+serde_json = "*"
+
+#[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+
+#tokio = { version = "1.0.0", default-features = false, features = ["io-std", "macros", "net", "rt-multi-thread", "time", "sync"] }
+#tokio-tungstenite = "*"
+tungstenite = "*"
+
+
+futures = "*"
+futures-util = "*"
+futures-lite = "*"
+async-std = "*"
+uuid = { version = "*", features = ["serde", "v4"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+async-io = "*"
+tokio-tungstenite = { version = "*" }
+tokio = { version = "*", features = ["full"] }
+tokio-native-tls = "*"
+async-compat = "0.2.1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+uuid = { version = "*", features = ["serde", "v4", "wasm-bindgen"] }
+wasm-bindgen = "0.2.69"
+wasm-bindgen-futures = "*"
+js-sys = "*"
+web-sys = {version = "*", features = [  "BinaryType",
+    "Blob",
+    "ErrorEvent",
+    "FileReader",
+    "MessageEvent",
+    "ProgressEvent","WebSocket"]}
+
+[dev-dependencies]
+
+env_logger = "*"
+serde_json = "*"
+serde = "*"

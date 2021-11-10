@@ -3,6 +3,12 @@ name = "pong-royale"
 version = "0.1.0"
 edition = "2018" #todo up to 2021
 
+[workspace]
+
+members = [
+    "bevy_ws",
+]
+
 [features]
 default = [
     "bevy/bevy_gltf",
@@ -10,7 +16,8 @@ default = [
     "bevy/render",
     "bevy/png",
     "bevy/bevy_wgpu",
-    "bevy_networking_turbulence/use-udp",
+    "bevy_ws/default"
+#    "bevy_networking_turbulence/use-udp",
 ]
 
 web = [
@@ -19,22 +26,29 @@ web = [
     "bevy/render",
     "bevy/png",
     "bevy_webgl2",
-    "bevy_networking_turbulence/use-webrtc",
+    "bevy_ws/web"
+#    "bevy_networking_turbulence/use-webrtc",
 ]
 
 headless = [
-    "bevy_networking_turbulence/use-webrtc",
+#    "bevy_networking_turbulence/use-webrtc",
 ]
 
 
 [dependencies]
 bevy = { version = "0.5", default-features = false }
 bevy_webgl2 = { version = "0.5", optional = true }
+bevy_ws = { path = "bevy_ws", default-features = false }
 #crystalorb-bevy-networking-turbulence = "0.2.1"
-bevy_networking_turbulence = { version = "0.3.3", default-features = false }
+#bevy_networking_turbulence = { version = "0.3.3", default-features = false }
 
 serde_json = "*"
 serde = { version = "*", features = ["derive"] }
+log = "*"
+env_logger = "*"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+console_error_panic_hook = "0.1.6"
 
 cfg-if = "1.0.0"
 #log = "*"

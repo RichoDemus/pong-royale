@@ -1,7 +1,6 @@
 use bevy::prelude::Vec2;
-
-use serde::Serialize;
 use serde::Deserialize;
+use serde::Serialize;
 
 // #[derive(Serialize, Deserialize, Debug)]
 // enum SimpleNetworkMessage {
@@ -10,7 +9,8 @@ use serde::Deserialize;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MovePaddle {
-    pub player_id: u32, // todo should only be sent by server
+    pub player_id: u64,
+    // todo should only be sent by server
     pub position: f32,
 }
 
@@ -33,6 +33,6 @@ struct PlayerState {
 #[derive(Serialize, Deserialize, Debug)]
 pub enum ServerMessage {
     PlayerStateUpdate(MovePaddle),
-    PlayerConnected(u32),
-    PlayerDisconnected(u32),
+    PlayerConnected(u64),
+    PlayerDisconnected(u64),
 }
