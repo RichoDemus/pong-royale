@@ -20,7 +20,7 @@ pub struct WebsocketPlugin;
 struct MessageOffset(usize); // todo remove
 
 impl Plugin for WebsocketPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.insert_resource(WebsocketResource::default());
         app.add_event::<WebsocketClientEvent>();
         app.add_system(setup_websocket_system.system());
@@ -49,6 +49,7 @@ fn write_websocket_event_to_client(
 
 fn setup_websocket_system(mut resource: ResMut<WebsocketResource>, task_pool: Res<IoTaskPool>) {
     if let Some(address) = resource.address.take() {
+        info!("Have an address to connect to: {address}");
         let (ws_to_event_channel_sender, ws_to_event_channel_receiver) =
             tokio::sync::mpsc::channel::<WebsocketClientEvent>(10);
         resource

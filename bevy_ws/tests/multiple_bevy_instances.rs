@@ -14,7 +14,7 @@ mod tests {
     struct NameResource(String);
 
     fn run_bevy(name: String, running: Arc<Mutex<bool>>) {
-        App::build()
+        App::new()
             .add_plugins(MinimalPlugins)
             .add_startup_system(startup.system())
             .add_system(shutdown.system())

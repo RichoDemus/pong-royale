@@ -19,7 +19,7 @@ use crate::{WebsocketClientEvent, WebsocketServerEvent};
 pub struct WebsocketServerPlugin;
 
 impl Plugin for WebsocketServerPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.insert_resource(WebsocketServerResource::default());
         app.add_event::<WebsocketServerEvent>();
         app.add_system(write_websocket_event_to_server.system());

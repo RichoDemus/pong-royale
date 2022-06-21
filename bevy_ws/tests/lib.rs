@@ -1,5 +1,6 @@
+#[cfg(test)]
 mod figure_out_bevy_async;
-
+#[cfg(test)]
 #[cfg(test)]
 mod tests {
     use bevy::app::AppExit;
@@ -180,7 +181,7 @@ mod tests {
             .try_init();
 
         let server = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketServerPlugin)
                 .add_startup_system(startup_server.system())
@@ -201,7 +202,7 @@ mod tests {
             .try_init();
 
         let client = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketPlugin)
                 .add_startup_system(startup_client.system())
@@ -221,7 +222,7 @@ mod tests {
             .try_init();
 
         let server = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketServerPlugin)
                 .add_startup_system(startup_server.system())
@@ -241,7 +242,7 @@ mod tests {
             .try_init();
 
         let server = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketServerPlugin)
                 .add_startup_system(startup_server.system())
@@ -253,7 +254,7 @@ mod tests {
         });
 
         let client = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketPlugin)
                 .add_startup_system(startup_client.system())
@@ -265,7 +266,7 @@ mod tests {
         });
 
         let client2 = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketPlugin)
                 .add_startup_system(startup_client.system())
@@ -289,7 +290,7 @@ mod tests {
             .try_init();
 
         let server = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketServerPlugin)
                 .add_startup_system(startup_server.system())
@@ -301,7 +302,7 @@ mod tests {
         });
 
         let client = std::thread::spawn(move || {
-            App::build()
+            App::new()
                 .add_plugins(MinimalPlugins)
                 .add_plugin(WebsocketPlugin)
                 .add_startup_system(startup_client.system())

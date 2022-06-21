@@ -35,7 +35,7 @@ mod tests {
             .filter_level(LevelFilter::Info)
             .try_init();
 
-        App::build()
+        App::new()
             .add_plugins(MinimalPlugins)
             .insert_resource(Running(Arc::new(Mutex::new(true))))
             .add_system(shutdown.system())

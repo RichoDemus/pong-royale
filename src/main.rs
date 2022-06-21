@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 use bevy::{
-    app::{App, EventReader, ScheduleRunnerSettings},
+    app::{App, ScheduleRunnerSettings},
     core::Time,
     MinimalPlugins,
 };
@@ -47,12 +47,12 @@ fn main() {
     //     // .filter_module("pong-royale", LevelFilter::Info)
     //     .init();
     #[cfg(not(target_arch = "wasm32"))]
-    let _res = env_logger::builder()
-        .filter_level(LevelFilter::Info)
-        .try_init();
+    // let _res = env_logger::builder()
+    //     .filter_level(LevelFilter::Info)
+    //     .try_init();
     info!("hello world!");
 
-    let mut app = App::build();
+    let mut app = App::new();
     app
         // minimal plugins necessary for timers + headless loop
         .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_secs_f64(
@@ -106,10 +106,12 @@ fn main() {
     app.run();
 }
 
+#[derive(Component)]
 struct Paddle {
     speed: f32,
 }
 
+#[derive(Component)]
 struct ControlledByPlayer {
     player_id: u64,
 }
@@ -140,9 +142,12 @@ fn client_startup(
     if !is_server() {
         commands
             .spawn_bundle(SpriteBundle {
-                material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
                 transform: Transform::from_xyz(0.0, 1. as f32 * 40. - 200., 0.0),
-                sprite: Sprite::new(Vec2::new(120.0, 30.0)),
+                sprite: Sprite {
+                    color: Color::rgb(0.5, 0.5, 1.0),
+                    custom_size: Some(Vec2::new(120.0, 30.0)),
+                    ..default()
+                },
                 ..Default::default()
             })
             .insert(Paddle { speed: 500.0 })
@@ -150,9 +155,12 @@ fn client_startup(
 
         commands
             .spawn_bundle(SpriteBundle {
-                material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
                 transform: Transform::from_xyz(0.0, 2. as f32 * 40. - 200., 0.0),
-                sprite: Sprite::new(Vec2::new(120.0, 30.0)),
+                sprite: Sprite {
+                    color: Color::rgb(0.5, 0.5, 1.0),
+                    custom_size: Some(Vec2::new(120.0, 30.0)),
+                    ..default()
+                },
                 ..Default::default()
             })
             .insert(Paddle { speed: 500.0 })
@@ -237,12 +245,19 @@ fn create_network_event_from_keyboard_input(
         }
 
         let mut direction = 0.0;
+        let mut movement = false;
         if keyboard_input.pressed(KeyCode::A) {
             direction -= 3.0;
+            movement = true;
         }
 
         if keyboard_input.pressed(KeyCode::D) {
             direction += 3.0;
+            movement = true;
+        }
+
+        if !movement {
+            continue;
         }
 
         let translation = &mut transform.translation;
@@ -259,7 +274,7 @@ fn create_network_event_from_keyboard_input(
             position: x,
         });
         let str = serde_json::to_string(&msg).expect("unable to serialize json");
-        info!("Sending {}", str);
+        info!("Player moved paddle, Sending {}", str);
         net.broadcast(str.to_string());
     }
 }
@@ -380,9 +395,12 @@ fn spawn_paddle_system_client(
         if let &PlayerEcsEvent::Connected(id) = my_event {
             commands
                 .spawn_bundle(SpriteBundle {
-                    material: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
                     transform: Transform::from_xyz(0.0, id as f32 * 40. - 200., 0.0),
-                    sprite: Sprite::new(Vec2::new(120.0, 30.0)),
+                    sprite: Sprite {
+                        color: Color::rgb(0.5, 0.5, 1.0),
+                        custom_size: Some(Vec2::new(120.0, 30.0)),
+                        ..default()
+                    },
                     ..Default::default()
                 })
                 .insert(Paddle { speed: 500.0 })
